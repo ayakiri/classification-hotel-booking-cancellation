@@ -5,33 +5,47 @@
 # Kaggle.com - Hotel Booking Cancellation Prediction by YOUSSEF ABOELWAFA
 
 # imports
-
+import pandas as pd
 
 # -- DATA IMPORT --
+data = pd.read_csv("booking.csv")
 
-# -- ANALYZE --
+print(data.head())
+print(data.describe())
+print(data.size)
+print(data.columns)
+
+# -- ANALYZE -- - M
 # stats (min, max, mean, median, std, var, range)
 
 # look for missing or anomalies data
 
-# clear and normalise data
-
+# -- VISUALISE -- - A
 # find correlations
 
-# -- VISUALISE --
+# -- PREPARE DATA -- - A
+# clear
 
-# -- SPLIT DATA --
-# train and test (do we need validation?)
+# data augmentation
+
+# normalize
+
+# -- SPLIT DATA -- - M
+# train and test
 
 # -- MODEL CREATION --
+# from sklearn import LogicRegression (o ile będzie pasować)
+# https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html
 
 # -- PREDICTIONS --
 
 # -- ANALYZE PREDICTIONS --
 # calculate useful metrics
+# use CleanML
 
 # visualise important observations
 
 # -- SAVING PREDICTIONS --
+
 
 # -- SUMMARIZATION --
