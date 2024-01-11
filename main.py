@@ -6,6 +6,8 @@
 
 # imports
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # -- DATA IMPORT --
 data = pd.read_csv("booking.csv")
@@ -50,7 +52,24 @@ for column in num_columns:
 # look for missing or anomalies data
 
 # -- VISUALISE -- - A
-# find correlations
+sns.heatmap(data.isnull(), yticklabels=False, cbar=False, cmap='viridis').set(title='Number of null values')
+plt.tight_layout()
+plt.savefig("analysis_plots/null_values.png")
+plt.show()
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(data[num_columns].corr(), annot=True).set(title='Data correlations')
+plt.tight_layout()
+plt.savefig("analysis_plots/data_correlations.png")
+plt.show()
+
+sns.pairplot(data[num_columns])
+plt.savefig("analysis_plots/pair_plot.png")
+plt.show()
+
+sns.countplot(x='booking status', data=data)
+plt.savefig("analysis_plots/count_booking_statuses.png")
+plt.show()
 
 # -- PREPARE DATA -- - A
 # clear
