@@ -3,7 +3,7 @@
 # Dobrzyniewicz Agata
 # DATASET:
 # Kaggle.com - Hotel Booking Cancellation Prediction by YOUSSEF ABOELWAFA
-
+import numpy as np
 # imports
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -63,16 +63,49 @@ plt.tight_layout()
 plt.savefig("analysis_plots/data_correlations.png")
 plt.show()
 
-sns.pairplot(data[num_columns])
-plt.savefig("analysis_plots/pair_plot.png")
-plt.show()
+# takes a long time to display, comment when not needed
+#sns.pairplot(data, hue='booking status')
+#plt.savefig("analysis_plots/pair_plot.png")
+#plt.show()
 
 sns.countplot(x='booking status', data=data)
 plt.savefig("analysis_plots/count_booking_statuses.png")
 plt.show()
 
+sns.stripplot(data=data[num_columns], orient='h', alpha=.25).set(title='Data with outliers')
+plt.savefig("analysis_plots/data_values_outliers.png")
+plt.tight_layout()
+plt.show()
+
 # -- PREPARE DATA -- - A
 # clear
+print("--------------")
+print("Cleaning data")
+
+outliers_columns = ['lead time', 'average price']
+
+for column in outliers_columns:
+    min = data[column].min()
+    max = data[column].max()
+
+    q1 = data[column].quantile(0.25)
+    q3 = data[column].quantile(0.75)
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    data[column] = data[column].apply(lambda x: np.median(data[column]) if x < lower_bound or x > upper_bound else x)
+
+    print("\nAfter cleaning")
+    print("COLUMN:", column)
+    print("MIN:", data[column].min(), "(Before: ", min, ")")
+    print("MAX:", data[column].max(), "(Before: ", max, ")")
+
+sns.stripplot(data=data[num_columns], orient='h', alpha=.25).set(title='Data without outliers')
+plt.savefig("analysis_plots/data_values_without_outliers.png")
+plt.tight_layout()
+plt.show()
+
+print("--------------")
 
 # data augmentation
 
