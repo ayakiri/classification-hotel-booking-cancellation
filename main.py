@@ -100,6 +100,13 @@ for column in outliers_columns:
     print("MIN:", data[column].min(), "(Before: ", min, ")")
     print("MAX:", data[column].max(), "(Before: ", max, ")")
 
+max_children_before = data["number of children"].max()
+data = data[data["number of children"] < 7]
+
+print("\nAfter cleaning")
+print("COLUMN: number of children")
+print("MAX:", data["number of children"].max(), "(Before: ", max_children_before, ")")
+
 sns.stripplot(data=data[num_columns], orient='h', alpha=.25).set(title='Data without outliers')
 plt.savefig("analysis_plots/data_values_without_outliers.png")
 plt.tight_layout()
@@ -108,6 +115,8 @@ plt.show()
 print("--------------")
 
 # data augmentation
+
+# change string values to numbers
 
 # normalize
 
