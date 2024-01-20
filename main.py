@@ -3,11 +3,13 @@
 # Dobrzyniewicz Agata
 # DATASET:
 # Kaggle.com - Hotel Booking Cancellation Prediction by YOUSSEF ABOELWAFA
-import numpy as np
+
 # imports
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import LabelEncoder
 
 # -- DATA IMPORT --
 data = pd.read_csv("booking.csv")
@@ -114,14 +116,40 @@ plt.show()
 
 print("--------------")
 
-# data augmentation
-
 # change string values to numbers
+print("--------------")
+print("Change strings to numbers")
+pd.set_option('display.max_columns', None)
+print(data.head())
 
-# normalize
+binary_not_num_columns = ['car parking space', 'repeated', 'booking status']
+
+label_encoder = LabelEncoder()
+
+for column in not_num_columns:
+    data[column] = label_encoder.fit_transform(data[column])
+
+# split date of reservation
+data['date of reservation'] = pd.to_datetime(data['date of reservation'], errors='coerce')
+
+data['year'] = data['date of reservation'].dt.year
+data['month'] = data['date of reservation'].dt.month
+data['day'] = data['date of reservation'].dt.day
+
+data = data.dropna(subset=['date of reservation'])
+
+data.drop('date of reservation', axis=1, inplace=True)
+
+print(data.head())
+print("--------------")
 
 # -- SPLIT DATA -- - M
 # train and test
+
+# -- PREPARE SLIT DATA -- - A
+# data augmentation
+
+# normalize
 
 # -- MODEL CREATION --
 # from sklearn import LogicRegression (o ile będzie pasować)
