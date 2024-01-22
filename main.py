@@ -4,6 +4,7 @@
 # DATASET:
 # Kaggle.com - Hotel Booking Cancellation Prediction by YOUSSEF ABOELWAFA
 
+
 # imports
 import numpy as np
 import pandas as pd
@@ -11,8 +12,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from imblearn.over_sampling import SMOTE
+from collections import Counter
+import os
 
 
+os.environ['LOKY_MAX_CPU_COUNT'] = '4'
 SPLIT_SIZE = 0.3
 
 # -- DATA IMPORT --
@@ -154,24 +159,60 @@ y = data['booking status']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_SIZE, random_state=42)
 
-# -- PREPARE SLIT DATA -- - A
+# -- PREPARE SPLIT DATA -- - A
 # data augmentation
+print("Before data augmentation: ", Counter(y_train))
+
+smote = SMOTE(sampling_strategy=1.0)
+X_train, y_train = smote.fit_resample(X_train, y_train)
+
+print("After data augmentation: ", Counter(y_train))
+
+sns.countplot(x='booking status', data=pd.DataFrame(data=y_train, columns=['booking status']))
+plt.savefig("analysis_plots/count_booking_statuses_after_augmentation_y.png")
+plt.show()
+
+print("--------------")
 
 # normalize
 
-# -- MODEL CREATION --
-# from sklearn import LogicRegression (o ile będzie pasować)
-# https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html
+# -- MODEL CREATION 1 --
+# Random Forest
 
 # -- PREDICTIONS --
 
 # -- ANALYZE PREDICTIONS --
 # calculate useful metrics
-# use CleanML
+# use CleanML - don't lol
+
+# visualise important observations
+
+# -- MODEL CREATION 2 --
+# SVM
+
+# -- PREDICTIONS --
+
+# -- ANALYZE PREDICTIONS --
+# calculate useful metrics
+# use CleanML - don't lol
+
+# visualise important observations
+
+# -- MODEL CREATION 3 --
+# Naïve Bayes
+
+# -- PREDICTIONS --
+
+# -- ANALYZE PREDICTIONS --
+# calculate useful metrics
+# use CleanML - don't lol
 
 # visualise important observations
 
 # -- SAVING PREDICTIONS --
+
+
+# -- COMPARE MODELS --
 
 
 # -- SUMMARIZATION --
