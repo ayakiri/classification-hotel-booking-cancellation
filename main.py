@@ -144,7 +144,9 @@ print(data.head())
 print("--------------")
 
 # -- SPLIT DATA -- - M
-# train and test
+
+X = data.drop(['booking status'], axis=1)
+y = data['booking status']
 
 # -- PREPARE SLIT DATA -- - A
 # data augmentation
