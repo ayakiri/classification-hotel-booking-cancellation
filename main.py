@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
@@ -23,6 +24,40 @@ os.environ['LOKY_MAX_CPU_COUNT'] = '4'
 
 SPLIT_SIZE = 0.3
 RANDOM_STATE = 44
+
+
+# functions
+def save_metrics(filename, model_name, model_accuracy, model_confusion_matrix, model_classification_report):
+    path = "model_metrics/" + filename
+    with PdfPages(path) as pdf:
+        plt.figure(figsize=(8, 6))
+        plt.text(0.5, 0.5, f"{model_name} Metrics", ha='center', va='center', fontsize=16)
+        plt.axis('off')
+        pdf.savefig()
+        plt.close()
+
+        plt.figure(figsize=(8, 6))
+        plt.subplot(3, 1, 1)
+        plt.text(0.5, 0.5, f"Accuracy: {model_accuracy}", ha='center', va='center', fontsize=12)
+        plt.axis('off')
+        pdf.savefig()
+        plt.close()
+
+        plt.figure(figsize=(8, 6))
+        plt.subplot(3, 1, 1)
+        plt.text(0.5, 0.5, f"Confusion Matrix:\n{model_confusion_matrix}", ha='center', va='center', fontsize=12)
+        plt.axis('off')
+        pdf.savefig()
+        plt.close()
+
+        plt.figure(figsize=(8, 6))
+        plt.subplot(3, 1, 1)
+        plt.text(0.5, 0.5, f"Classification Report:\n{model_classification_report}", ha='center', va='center', fontsize=12)
+        plt.axis('off')
+        pdf.savefig()
+        plt.close()
+
+        print(f"{model_name} report saved to {path}")
 
 # -- DATA IMPORT --
 data = pd.read_csv("booking.csv")
@@ -261,6 +296,12 @@ print("--------------")
 # visualise important observations
 
 # -- SAVING PREDICTIONS --
+
+save_metrics(filename="rf_classifier_metrics.pdf",
+             model_name="Random Forest Classifier",
+             model_accuracy=rf_classifier_model_accuracy,
+             model_confusion_matrix=rf_classifier_model_conf_matrix,
+             model_classification_report=rf_classifier_model_classification_rep)
 
 
 # -- COMPARE MODELS --
