@@ -79,7 +79,7 @@ plt.show()
 #plt.savefig("analysis_plots/pair_plot.png")
 #plt.show()
 
-sns.countplot(x='booking status', data=data)
+sns.countplot(x='booking status', data=data).set(title='Booking statuses Count')
 plt.savefig("analysis_plots/count_booking_statuses.png")
 plt.show()
 
@@ -169,7 +169,10 @@ X_train, y_train = smote.fit_resample(X_train, y_train)
 
 print("After data augmentation: ", Counter(y_train))
 
-sns.countplot(x='booking status', data=pd.DataFrame(data=y_train, columns=['booking status']))
+sns.countplot(x='booking status', data=pd.DataFrame(data=y_train, columns=['booking status'])).set(title='Booking '
+                                                                                                         'statuses '
+                                                                                                         'after data '
+                                                                                                         'augmentation')
 plt.savefig("analysis_plots/count_booking_statuses_after_augmentation_y.png")
 plt.show()
 
