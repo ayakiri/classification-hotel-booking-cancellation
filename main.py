@@ -11,7 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 import os
@@ -161,6 +161,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_SIZE, 
 
 # -- PREPARE SPLIT DATA -- - A
 # data augmentation
+print("Data augmentation")
 print("Before data augmentation: ", Counter(y_train))
 
 smote = SMOTE(sampling_strategy=1.0)
@@ -175,6 +176,33 @@ plt.show()
 print("--------------")
 
 # normalize
+print("Normalization")
+print("Before")
+print("Training set:")
+for column in X_train:
+    print("COLUMN:", column, "- MIN:", X_train[column].min(), "; MAX:", X_train[column].max())
+print("Testing set:")
+for column in X_test:
+    print("COLUMN:", column, "MIN:", X_test[column].min(), "; MAX:", X_test[column].max())
+
+x_columns = X_train.columns.tolist()
+
+scaler = MinMaxScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.fit_transform(X_test)
+
+X_train = pd.DataFrame(X_train, columns=x_columns)
+X_test = pd.DataFrame(X_test, columns=x_columns)
+
+print("After")
+print("Training set:")
+for column in X_train:
+    print("COLUMN:", column, "MIN:", X_train[column].min(), "; MAX:", X_train[column].max())
+print("Testing set:")
+for column in X_test:
+    print("COLUMN:", column, "MIN:", X_test[column].min(), "; MAX:", X_test[column].max())
+
+print("--------------")
 
 # -- MODEL CREATION 1 --
 # Random Forest
