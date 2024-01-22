@@ -12,13 +12,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 import os
 
 
 os.environ['LOKY_MAX_CPU_COUNT'] = '4'
+
 SPLIT_SIZE = 0.3
+RANDOM_STATE = 44
 
 # -- DATA IMPORT --
 data = pd.read_csv("booking.csv")
@@ -157,7 +161,7 @@ print("--------------")
 X = data.drop(['booking status'], axis=1)
 y = data['booking status']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_SIZE, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_SIZE, random_state=RANDOM_STATE)
 
 # -- PREPARE SPLIT DATA -- - A
 # data augmentation
@@ -209,14 +213,30 @@ print("--------------")
 
 # -- MODEL CREATION 1 --
 # Random Forest
+print("RANDOM FOREST MODEL")
+number_of_estimators = 100
+
+rf_classifier_model = RandomForestClassifier(n_estimators=number_of_estimators, random_state=RANDOM_STATE)
+
+rf_classifier_model.fit(X_train, y_train)
 
 # -- PREDICTIONS --
+rf_classifier_model_y_pred = rf_classifier_model.predict(X_test)
 
 # -- ANALYZE PREDICTIONS --
-# calculate useful metrics
-# use CleanML - don't lol
+rf_classifier_model_accuracy = accuracy_score(y_test, rf_classifier_model_y_pred)
+rf_classifier_model_conf_matrix = confusion_matrix(y_test, rf_classifier_model_y_pred)
+rf_classifier_model_classification_rep = classification_report(y_test, rf_classifier_model_y_pred)
+
+print("Accuracy:", rf_classifier_model_accuracy)
+print("Confusion Matrix:")
+print(rf_classifier_model_conf_matrix)
+print("Classification Report:")
+print(rf_classifier_model_classification_rep)
 
 # visualise important observations
+
+print("--------------")
 
 # -- MODEL CREATION 2 --
 # SVM
