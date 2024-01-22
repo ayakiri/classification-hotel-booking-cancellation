@@ -202,6 +202,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=SPLIT_SIZE, 
 # data augmentation
 print("Data augmentation")
 print("Before data augmentation: ", Counter(y_train))
+sns.countplot(x='booking status', data=pd.DataFrame(data=y_train, columns=['booking status'])).set(title='Booking '
+                                                                                                         'statuses '
+                                                                                                         'before data '
+                                                                                                         'augmentation')
+plt.savefig("analysis_plots/count_booking_statuses_before_augmentation_y.png")
+plt.show()
 
 smote = SMOTE(sampling_strategy=1.0)
 X_train, y_train = smote.fit_resample(X_train, y_train)
