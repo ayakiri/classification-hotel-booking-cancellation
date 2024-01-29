@@ -11,14 +11,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, learning_curve
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, auc, \
+    precision_recall_curve, average_precision_score
 from imblearn.over_sampling import SMOTE
 from collections import Counter
 import os
 
+from sklearn.svm import SVC
 
 os.environ['LOKY_MAX_CPU_COUNT'] = '4'
 
@@ -258,11 +261,11 @@ print("RANDOM FOREST MODEL")
 number_of_estimators = 100
 
 rf_classifier_model = RandomForestClassifier(n_estimators=number_of_estimators, random_state=RANDOM_STATE)
-
 rf_classifier_model.fit(X_train, y_train)
 
 # -- PREDICTIONS --
 rf_classifier_model_y_pred = rf_classifier_model.predict(X_test)
+
 
 # -- ANALYZE PREDICTIONS --
 rf_classifier_model_accuracy = accuracy_score(y_test, rf_classifier_model_y_pred)
@@ -277,27 +280,119 @@ print(rf_classifier_model_classification_rep)
 
 # visualise important observations
 
+feature_importance = rf_classifier_model.feature_importances_
+features = X_train.columns
+
+plt.figure(figsize=(10, 6))
+plt.barh(features, feature_importance)
+plt.xlabel('Feature Importance Random Forest')
+plt.ylabel('Features')
+plt.title('Random Forest Feature Importance')
+plt.savefig("model_metrics/feature_importance_random_forest.png")
+plt.show()
+
+y_scores = rf_classifier_model.predict_proba(X_test)[:, 1]
+fpr, tpr, thresholds = roc_curve(y_test, y_scores)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc)
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve Random Forest')
+plt.legend(loc='lower right')
+plt.savefig("model_metrics/roc_curve_random_forest.png")
+plt.show()
+
+precision, recall, _ = precision_recall_curve(y_test, y_scores)
+average_precision = average_precision_score(y_test, y_scores)
+
+plt.figure(figsize=(8, 6))
+plt.step(recall, precision, color='b', alpha=0.2, where='post')
+plt.fill_between(recall, precision, step='post', alpha=0.2, color='b')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title(f'Precision-Recall Curve (AP={average_precision:.2f}) Random Forest')
+plt.savefig("model_metrics/precision_recall_curve_random_forest.png")
+plt.show()
+
 print("--------------")
 
 # -- MODEL CREATION 2 --
-# SVM
+# Support Vector Machine
+print("SVM MODEL")
+
+svm_classifier_model = SVC(kernel='linear', gamma='scale', random_state=RANDOM_STATE)
+svm_classifier_model.fit(X_train, y_train)
 
 # -- PREDICTIONS --
 
+svm_classifier_model_y_pred = svm_classifier_model.predict(X_test)
+
 # -- ANALYZE PREDICTIONS --
-# calculate useful metrics
-# use CleanML - don't lol
+
+svm_classifier_model_accuracy = accuracy_score(y_test, svm_classifier_model_y_pred)
+svm_classifier_model_conf_matrix = confusion_matrix(y_test, svm_classifier_model_y_pred)
+svm_classifier_model_classification_rep = classification_report(y_test, svm_classifier_model_y_pred)
+
+print("Accuracy:", svm_classifier_model_accuracy)
+print("Confusion Matrix:")
+print(svm_classifier_model_conf_matrix)
+print("Classification Report:")
+print(svm_classifier_model_classification_rep)
 
 # visualise important observations
+y_scores_svm = svm_classifier_model.decision_function(X_test)
+fpr_svm, tpr_svm, thresholds_svm = roc_curve(y_test, y_scores_svm)
+roc_auc_svm = auc(fpr_svm, tpr_svm)
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr_svm, tpr_svm, color='darkorange', lw=2, label='ROC curve (area = %0.2f)' % roc_auc_svm)
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('SVM - Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc='lower right')
+plt.savefig("model_metrics/svm_roc_curve.png")
+plt.show()
+
+precision_svm, recall_svm, _ = precision_recall_curve(y_test, y_scores_svm)
+average_precision_svm = average_precision_score(y_test, y_scores_svm)
+
+plt.figure(figsize=(8, 6))
+plt.step(recall_svm, precision_svm, color='b', alpha=0.2, where='post')
+plt.fill_between(recall_svm, precision_svm, step='post', alpha=0.2, color='b')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title(f'SVM - Precision-Recall Curve (AP={average_precision_svm:.2f})')
+plt.savefig("model_metrics/svm_precision_recall_curve.png")
+plt.show()
 
 # -- MODEL CREATION 3 --
 # Naïve Bayes
+print("NAIVE BAYES MODEL")
+
+nb_classifier_model = MultinomialNB()
+nb_classifier_model.fit(X_train, y_train)
 
 # -- PREDICTIONS --
 
+nb_classifier_model_y_pred = nb_classifier_model.predict(X_test)
+
 # -- ANALYZE PREDICTIONS --
-# calculate useful metrics
-# use CleanML - don't lol
+
+nb_classifier_model_accuracy = accuracy_score(y_test, nb_classifier_model_y_pred)
+nb_classifier_model_conf_matrix = confusion_matrix(y_test, nb_classifier_model_y_pred)
+nb_classifier_model_classification_rep = classification_report(y_test, nb_classifier_model_y_pred)
+
+print("Accuracy:", nb_classifier_model_accuracy)
+print("Confusion Matrix:")
+print(nb_classifier_model_conf_matrix)
+print("Classification Report:")
+print(nb_classifier_model_classification_rep)
+
+print("--------------")
 
 # visualise important observations
 
@@ -308,6 +403,19 @@ save_metrics(filename="rf_classifier_metrics.pdf",
              model_accuracy=rf_classifier_model_accuracy,
              model_confusion_matrix=rf_classifier_model_conf_matrix,
              model_classification_report=rf_classifier_model_classification_rep)
+
+save_metrics(filename="svm_classifier_metrics.pdf",
+             model_name="Support Vector Machine Classifier",
+             model_accuracy=svm_classifier_model_accuracy,
+             model_confusion_matrix=svm_classifier_model_conf_matrix,
+             model_classification_report=svm_classifier_model_classification_rep)
+
+save_metrics(filename="nb_classifier_metrics.pdf",
+             model_name="Naïve Bayes Classifier",
+             model_accuracy=nb_classifier_model_accuracy,
+             model_confusion_matrix=nb_classifier_model_conf_matrix,
+             model_classification_report=nb_classifier_model_classification_rep)
+
 
 
 # -- COMPARE MODELS --
