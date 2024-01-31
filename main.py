@@ -396,6 +396,31 @@ print(nb_classifier_model_classification_rep)
 print("--------------")
 
 # visualise important observations
+y_pred_prob = nb_classifier_model.predict_proba(X_test)[:, 1]
+fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
+roc_auc = auc(fpr, tpr)
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Naïve Bayes - Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc='lower right')
+plt.savefig("model_metrics/naive_bayes_roc_curve.png")
+plt.show()
+
+precision, recall, _ = precision_recall_curve(y_test, y_pred_prob)
+avg_precision = average_precision_score(y_test, y_pred_prob)
+
+plt.figure(figsize=(8, 6))
+plt.plot(recall, precision, color='darkorange', lw=2, label=f'Precision-Recall curve (AP = {avg_precision:.2f})')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Naïve Bayes - Precision-Recall Curve')
+plt.legend(loc='lower right')
+plt.savefig("model_metrics/naive_bayes_precision_recall_curve.png")
+plt.show()
 
 # -- SAVING PREDICTIONS --
 
