@@ -380,6 +380,7 @@ nb_classifier_model.fit(X_train, y_train)
 # -- PREDICTIONS --
 
 nb_classifier_model_y_pred = nb_classifier_model.predict(X_test)
+nb_classifier_model_y_pred_prob = nb_classifier_model.predict_proba(X_test)[:, 1]
 
 # -- ANALYZE PREDICTIONS --
 
@@ -396,8 +397,7 @@ print(nb_classifier_model_classification_rep)
 print("--------------")
 
 # visualise important observations
-y_pred_prob = nb_classifier_model.predict_proba(X_test)[:, 1]
-fpr, tpr, _ = roc_curve(y_test, y_pred_prob)
+fpr, tpr, _ = roc_curve(y_test, nb_classifier_model_y_pred_prob)
 roc_auc = auc(fpr, tpr)
 
 plt.figure(figsize=(8, 6))
@@ -410,8 +410,8 @@ plt.legend(loc='lower right')
 plt.savefig("model_metrics/naive_bayes_roc_curve.png")
 plt.show()
 
-precision, recall, _ = precision_recall_curve(y_test, y_pred_prob)
-avg_precision = average_precision_score(y_test, y_pred_prob)
+precision, recall, _ = precision_recall_curve(y_test, nb_classifier_model_y_pred_prob)
+avg_precision = average_precision_score(y_test, nb_classifier_model_y_pred_prob)
 
 plt.figure(figsize=(8, 6))
 plt.plot(recall, precision, color='darkorange', lw=2, label=f'Precision-Recall curve (AP = {avg_precision:.2f})')
