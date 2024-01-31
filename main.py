@@ -259,8 +259,9 @@ print("--------------")
 # Random Forest
 print("RANDOM FOREST MODEL")
 number_of_estimators = 100
+max_depth = 15
 
-rf_classifier_model = RandomForestClassifier(n_estimators=number_of_estimators, random_state=RANDOM_STATE)
+rf_classifier_model = RandomForestClassifier(n_estimators=number_of_estimators, max_depth=max_depth, random_state=RANDOM_STATE)
 rf_classifier_model.fit(X_train, y_train)
 
 # -- PREDICTIONS --
